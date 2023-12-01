@@ -4,6 +4,9 @@ import { useState } from "react"
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { db } from "../firebase";
+import { FcHome } from "react-icons/fc";
+import { Link } from "react-router-dom";
+
 
 export default function Profile () {
   const auth = getAuth();
@@ -87,6 +90,16 @@ export default function Profile () {
                 Sign Out</p>
             </div>
           </form>
+          <button type="submit" 
+            className="w-full bg-red-600 text-white px-7 py-3 text-sm 
+            font-medium rounded-3xl shadow-md hover:bg-red-700 transition duration-150
+            ease-in-out hover:shadow-lg active:bg-red-800"
+          >
+            <Link to="/createListing" className="flex justify-center items-center">
+              <FcHome className="mr-3 text-3xl bg-red-200 rounded-full border-2"/>
+              Sell or Rent your property
+            </Link>
+          </button>
         </div>
       </section>
     </>

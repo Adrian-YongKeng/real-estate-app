@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from "./components/AuthProvider";
 import RequireAuth from "./components/RequireAuth";
+import CreateListing from "./pages/CreateListing";
 
 export default function App() {
 
@@ -31,6 +32,8 @@ export default function App() {
           <Route path="/offers" element={<Offers />}/>
           <Route path="/signup" element={<SignUp/>}/>
           <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          <Route path="/createListing" element={<CreateListing/>}/>
+
         </Routes>
       </BrowserRouter>
       </AuthProvider>
