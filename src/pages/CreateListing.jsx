@@ -152,34 +152,34 @@ export default function CreateListing() {
             user_id : auth.currentUser.uid
         };
         const docRef = await addDoc(collection(db, "listings"), firestoreData);
-        setLoading(false)
+        //setLoading(false)
         //toast.success("Listing created")
-        navigate(`/category/${formData.type}/${docRef.id}`);
-
+        
         //geocoding api
         if (geolocationEnabled) {
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${import.meta.env.VITE_API_KEY}`
-            );
-            const data = await response.json();
-            console.log(data);
-            if (data.status === "OK" && data.results[0]?.geometry.location) {
-                const lat = data.results[0].geometry.location.lat ?? 0;
-                const lng = data.results[0].geometry.location.lng ?? 0;
-
-            //update the formData state with the new latitude&longitude
-                const updatedFormData = {
-                    ...formData,
-                    latitude: lat,
-                    longitude: lng,
-                    firestore_doc_id : docRef.id
-                };
-            //use updatedFormData in dispatch
-                dispatch(addListing(updatedFormData))
+                );
+                const data = await response.json();
+                console.log(data);
+                if (data.status === "OK" && data.results[0]?.geometry.location) {
+                    const lat = data.results[0].geometry.location.lat ?? 0;
+                    const lng = data.results[0].geometry.location.lng ?? 0;
+                    
+                    //update the formData state with the new latitude&longitude
+                    const updatedFormData = {
+                        ...formData,
+                        latitude: lat,
+                        longitude: lng,
+                        firestore_doc_id : docRef.id
+                    };
+                    //use updatedFormData in dispatch
+                    dispatch(addListing(updatedFormData))
                     .then(() => {
-                        toast.success("Listing created successfully!")
                         console.log(updatedFormData)
-                        //navigate("/listing");
+                        navigate(`/category/${formData.type}/${docRef.id}`);
+                        toast.success("Listing created successfully!")
+                        setLoading(false)
                     })
                     .catch((error) => {
                         toast.error("Failed to create listing", error);
@@ -192,9 +192,9 @@ export default function CreateListing() {
         } 
     }
 
-    //if(loading){
-    //    return <Spinner/>
-    //}
+    if(loading){
+        return <Spinner/>
+    }
 
   return (
     <div className="max-w-md px-2 mx-auto">

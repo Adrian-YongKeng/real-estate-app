@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { auth } from "../firebase";
+import Spinner from "../components/Spinner";
 
 export const AuthContext = createContext();
 
@@ -16,10 +17,13 @@ export function AuthProvider({children}) {
     }, []);
 
     const value = { currentUser};
-
+    
+    
+    //{!loading && children}
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            
+            {loading ? <Spinner /> : children}
         </AuthContext.Provider>
     )
 }
