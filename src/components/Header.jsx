@@ -12,11 +12,9 @@ export default function Header() {
     const pathMatchRoute = (route) => {
         return route === location.pathname;
     }
-
-    //if(route === location.pathname){
-    //    return true
-    //}
-
+//if(route === location.pathname){
+ //   return true
+//}
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -46,20 +44,20 @@ export default function Header() {
                 <ul className="flex space-x-10">
                     <li className={`cursor-pointer py-3 text-sm font-semibold
                         text-gray-400 border-b-4 border-b-transparent 
-                        ${ pathMatchRoute("/") && "text-gray-900 border-b-red-600" }`}
+                        ${ pathMatchRoute("/") && "text-gray-900 border-b-red-500" }`}
                         onClick={()=> navigate("/")}>
                         Home
                     </li>
                     <li className={`cursor-pointer py-3 text-sm font-semibold
                         text-gray-400 border-b-4 border-b-transparent 
-                        ${pathMatchRoute("/offers") && "text-gray-900 border-b-red-600"}`}
+                        ${pathMatchRoute("/offers") && "text-gray-900 border-b-red-500"}`}
                         onClick={()=> navigate("/offers")} >
                             Offers
                     </li>
                     <li className={`cursor-pointer py-3 text-sm font-semibold
                         text-gray-400 border-b-4 border-b-transparent
                         ${ (pathMatchRoute("/signin") || pathMatchRoute("/profile") ) 
-                            && "text-gray-900 border-b-red-600" }
+                            && "text-gray-900 border-b-red-500" }
                         `}
                         onClick={()=> navigate(pageTitle === "Sign In" ? "/signin" : "/profile")} 
                     >

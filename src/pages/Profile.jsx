@@ -50,6 +50,8 @@ export default function Profile () {
       toast.error("Failed to update the profile details.")
     }
   }
+  
+
 
   return (
     <>

@@ -11,12 +11,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from "./components/AuthProvider";
 import RequireAuth from "./components/RequireAuth";
 import CreateListing from "./pages/CreateListing";
+import Listing from "./pages/Listing";
+import { Provider } from "react-redux";
+import store from "./store"
+import Category from "./pages/Category";
 
 export default function App() {
 
   return (
     <>
     <AuthProvider>
+    <Provider store={store}>
       <BrowserRouter>
       <Header/>
         <Routes>
@@ -32,11 +37,21 @@ export default function App() {
           <Route path="/offers" element={<Offers />}/>
           <Route path="/signup" element={<SignUp/>}/>
           <Route path="/forgot-password" element={<ForgotPassword/>}/>
-          <Route path="/createListing" element={<CreateListing/>}/>
+          <Route 
+            path="/createListing" 
+            element={
+              <RequireAuth>
+                <CreateListing/>
+              </RequireAuth>
+            }
+          />
+          <Route path="/listing" element={<Listing/>}/>
+          <Route path="/category" element={<Category/>}/>
 
         </Routes>
       </BrowserRouter>
-      </AuthProvider>
+    </Provider>
+    </AuthProvider>
       <ToastContainer
         position="bottom-center"
         autoClose={5000}
