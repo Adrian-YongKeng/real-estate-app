@@ -4,8 +4,17 @@ import axios from "axios";
 
 const BASE_URL = "https://adrian-estate-api.yy1123.repl.co";
 
+// fetch the 5 latest listings
+export const fetchLatestListings = createAsyncThunk(
+    "listings/fetchLatestListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/latest`);
+      return response.data;
+    }
+  );
+  
 
-//get by userid
+//get listings by userid
 export const fetchListings = createAsyncThunk(
     "listings/fetchListings", 
     async(user_id) => { //userId
@@ -14,7 +23,7 @@ export const fetchListings = createAsyncThunk(
     }
 );
 
-//get by firestore_doc_id
+//get single listing by firestore_doc_id
 export const fetchFormData = createAsyncThunk(
     "listings/fetchFormData", 
     async(firestore_doc_id) => {                     //listing
@@ -82,6 +91,9 @@ const listingsSlice = createSlice({
         })
         .addCase(fetchFormData.fulfilled, (state,action) => {
             state.listings = [action.payload];//object
+        })
+        .addCase(fetchLatestListings.fulfilled, (state, action) => {
+            state.listings = action.payload;
         })
         
     }

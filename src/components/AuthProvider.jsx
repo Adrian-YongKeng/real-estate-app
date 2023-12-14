@@ -22,7 +22,6 @@ export function AuthProvider({children}) {
     //{!loading && children}
     return (
         <AuthContext.Provider value={value}>
-            
             {loading ? <Spinner /> : children}
         </AuthContext.Provider>
     )

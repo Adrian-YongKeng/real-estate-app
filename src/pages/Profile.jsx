@@ -17,7 +17,6 @@ export default function Profile () {
   const {currentUser} = useContext(AuthContext)
   const dispatch = useDispatch();
   const listings = useSelector(state => state.listings.listings)
-
   const [loading , setLoading] = useState(true);
   const navigate = useNavigate();
   const [changeDetail, setChangeDetail] =useState(false)
@@ -43,9 +42,8 @@ export default function Profile () {
   }
 
   const submitChanges = async() => {
-    try {
+    try {   //update displayName in firebase Auth
       if(auth.currentUser.displayName !== username){
-        //update displayName in firebase Auth
         await updateProfile(auth.currentUser, {
           displayName: username,
         });
@@ -53,15 +51,13 @@ export default function Profile () {
                               //collection
         const docRef = doc(db, "users", auth.currentUser.uid)
         await updateDoc(docRef, {
-          username: username
-        })
+          username: username})
       }
       toast.success("Profile details updated successfully!")
     } catch (error) {
       toast.error("Failed to update the profile details.")
     }
   }
-  
   
   useEffect(() => {
     if (currentUser.uid) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { fetchFormData } from "../features/listings/listingsSlice";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
@@ -14,7 +14,9 @@ import {
 import "swiper/css/bundle"
 import {  FaBath, FaBed, FaCouch, FaMapLocationDot, FaShare } from "react-icons/fa6";
 import { FaParking } from "react-icons/fa";
-
+import { getAuth } from "firebase/auth";
+import Contact from "../components/Contact";
+import Maps from "../components/Maps";
 
 
 export default function Listing() {
@@ -22,8 +24,10 @@ export default function Listing() {
   const { firestore_doc_id } = useParams();
   const [loading, setLoading] = useState(true)
   const [linkCopied, setLinkCopied] =useState(false)
-
- // useEffect(() => {
+  const auth = getAuth();
+  const [contactLandlord, setContactLandord] = useState(false);
+  const navigate = useNavigate();
+  // useEffect(() => {
  //   if (firestore_doc_id) {
  //   dispatch(fetchFormData(firestore_doc_id))
  //   setLoading(false)
@@ -62,7 +66,17 @@ export default function Listing() {
    // Split the image_url string into an array if it's not already an array
    const imageUrls = Array.isArray(listing.image_url)
    ? listing.image_url
-   : listing.image_url.split(';'); // Use the correct delimiter to split the string
+   : listing.image_url.split(';'); // delimiter to split the string
+
+   const handleContactClick = () => {
+    // Check if user is logged in
+    if (auth.currentUser) {
+      setContactLandord(true);
+    } else {
+      toast.error("Please sign in or sign up to contact the landlord / agents.");
+      navigate('/signin'); 
+    }
+  };
 
   return (
     <main>
@@ -72,7 +86,7 @@ export default function Listing() {
         pagination={{ type:"progressbar" }}
         effect="fade" 
         modules={[EffectFade, Autoplay, Navigation, Pagination]} 
-        autoplay={{delay: 3000}}
+        autoplay={{delay: 5000}}
         >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index}>
@@ -87,6 +101,7 @@ export default function Listing() {
           </SwiperSlide>
         ))}
       </Swiper>
+
       <div className="fixed top-[13%] right-[3%] z-10 bg-white 
         cursor-pointer rounded-full w-10 h-10 flex justify-center items-center"
         onClick={()=> {
@@ -101,7 +116,8 @@ export default function Listing() {
       </div>
       {linkCopied && <p className="fixed top-[23%] right-[5%] z-10 p-2 font-semibold 
         border-2 border-gray-300 rounded-md bg-white"
-        >Link Copied</p>}
+        >Link Copied</p>
+      }
 
     <div className="m-4 flex flex-col md:flex-row max-w-6xl lg:mx-auto p-4 rounded-lg 
       shadow-lg bg-white lg:space-x-5">
@@ -123,22 +139,22 @@ export default function Listing() {
               {listing.address}
             </p>
             <div className="flex justify-start items-center space-x-4 w-[75%]">
-              <p className="bg-red-700 w-full max-w-[200px] rounded-md p-1
+              <p className="bg-gray-500 w-full max-w-[200px] rounded-md p-1
                text-white text-center font-semibold shadow-md">
                 {listing.type === "rent" ? "Rent" : "Sale"}
               </p>
               {listing.offer && (
-                <p className="w-full max-w-[200px] bg-green-700 rounded-md p-1
+                <p className="w-full max-w-[200px] bg-green-500 rounded-md p-1
                  text-white text-center font-semibold shadow-md">
                   ${listing.price - listing.discounted_price} discount
                 </p>
               )}
             </div>
-            <p className="mt-6 mb-5">
+            <p className="mt-7 mb-7">
               <span className="font-semibold">Description -</span>
               {listing.description}
             </p>
-            <ul className="flex items-center space-x-2 sm:space-x-10 text-sm font-semibold mb-6">
+            <ul className="flex items-center space-x-2 sm:space-x-10 text-sm font-semibold mb-3">
               <li className="flex items-center whitespace-nowrap">
                 <FaBed className="mr-1 text-lg"/>
                 {listing.bedrooms} Bed
@@ -156,10 +172,30 @@ export default function Listing() {
                 {listing.furnished ? "Furnished" : "No furnised"} 
               </li>
             </ul>
+            <hr className="mb-6"/>
+            {listing.user_id !== auth.currentUser?.uid && !contactLandlord && (
+              <div className="mt-6">
+                <button 
+                  onClick={handleContactClick}
+                  className="px-7 py-3 bg-red-600 text-white font-medium text-sm uppercase rounded 
+                  shadow-md hover:bg-red-700 hover:shaodow-lg focus:bg-red-700 focus:shadow-lg w-full
+                  text-center transition duration-150 ease-in-out">
+                  Contact Landlord
+                </button>
+              </div>
+            )}
+            {contactLandlord && (
+              <Contact
+                listing= {listing}
+              />
+            )}
         </div>
-        <div className="bg-blue-300 w-full h-[200px] lg-[400px] z-10 overflow-x-hidden"></div>
+        <div className="mt-6 md:mt-0 md:ml-2 w-full h-[200px] md:h-[400px] z-10 overflow-x-hidden">
+          <Maps
+            listing={listing}
+          />
+        </div>
     </div>
-    
     </main>
 
   )
