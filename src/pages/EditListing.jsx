@@ -5,15 +5,15 @@ import { toast } from "react-toastify";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import {v4 as uuidv4} from "uuid";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
-import { addListing } from "../features/listings/listingsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router";
+import {  fetchFormData, updateListing } from "../features/listings/listingsSlice";
 import { AuthContext } from "../components/AuthProvider";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {  doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 
-export default function CreateListing() {
+export default function EditListing() {
     const auth = getAuth();
     const { currentUser } = useContext(AuthContext);
     const [geolocationEnabled, setGeolocationEnabled] = useState(true)
@@ -21,6 +21,7 @@ export default function CreateListing() {
     const [loading, setLoading] =useState(false);
     const dispatch =useDispatch();
     const navigate = useNavigate();
+    const { firestore_doc_id } = useParams();
 
     const [formData, setFormData] = useState({
         type: "rent",
@@ -48,6 +49,52 @@ export default function CreateListing() {
         images,
     } = formData
 
+    // Get your listing data from the Redux store
+    const listing = useSelector((state) =>
+        state.listings.listings.find((listing) => listing.firestore_doc_id === firestore_doc_id)
+    );
+    
+    //useEffect(() => {
+    //    if (listing && listing.user_id !== auth.currentUser.uid) { 
+    //        toast.error("You can't edit this listing");
+    //        navigate("/");
+    //    }
+    //}, [auth.currentUser.uid, listing, navigate]);
+    
+    // Fetch listing data when the component mounts
+    useEffect(() => {
+        if (!listing && firestore_doc_id) {
+        setLoading(true);
+        dispatch(fetchFormData(firestore_doc_id))
+            .unwrap()
+            .then((data) => {
+                setFormData({ ...data }); // set form data with the fetched data
+            })
+            .catch((error) => {
+                console.error('Failed to fetch listing data:', error);
+                toast.error('Failed to fetch listing data.');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+        } else if (listing) {
+            // If listing exists in Redux store, use that to prefill the form
+            setFormData({ ...listing });
+            setLoading(false);
+        }
+    }, [dispatch, firestore_doc_id, listing]);
+  
+    useEffect(() => {
+        if (currentUser) {
+            setFormData(prevFormData => ({ 
+                ...prevFormData, 
+                user_id: currentUser.uid,
+                username: currentUser.displayName,
+                email: currentUser.email
+            }));
+        }
+    }, [currentUser]);
+
     //manage the state of form inputs
     const onChange = (e) => {
         let boolean = null;
@@ -73,17 +120,6 @@ export default function CreateListing() {
             }))
         }
     }
-
-    useEffect(() => {
-        if (currentUser) {
-            setFormData(prevFormData => ({ 
-                ...prevFormData, 
-                user_id: currentUser.uid,
-                username: currentUser.displayName,
-                email: currentUser.email
-             }));
-        }
-    }, [currentUser]);
 
     //Upload images to firestore db
     const storeImage = async(image) => {
@@ -141,7 +177,7 @@ export default function CreateListing() {
             )
             .catch((error) => {
                 setLoading(false);
-                toast.error("Images failed to upload.", error)
+                toast.error("Images failed to upload", error)
                 return;
             })   
         console.log(imgUrls)
@@ -152,7 +188,8 @@ export default function CreateListing() {
             user_id : auth.currentUser.uid
         };
 
-        const docRef = await addDoc(collection(db, "listings"), firestoreData);
+        const docRef = doc(db, "listings", firestore_doc_id)
+        await updateDoc(docRef,  firestoreData);
         //setLoading(false)
         //toast.success("Listing created")
         
@@ -176,16 +213,16 @@ export default function CreateListing() {
                         image_url : imgUrls.join(';')
                     };
                     //use updatedFormData in dispatch
-                    dispatch(addListing(updatedFormData))
+                    dispatch(updateListing(updatedFormData))
                     .then(() => {
                         console.log(updatedFormData)
                         //navigate(`/category/${formData.type}/${docRef.id}`);
                         navigate(`/listing/${docRef.id}`);
-                        toast.success("Listing created successfully!")
+                        toast.success("Listing edited successfully!")
                         setLoading(false)
                     })
                     .catch((error) => {
-                        toast.error("Failed to create listing", error);
+                        toast.error("Failed to edit listing", error);
                 });
             } else {
                 setLoading(false);
@@ -202,7 +239,7 @@ export default function CreateListing() {
   return (
     <div className="max-w-md px-2 mx-auto">
        <h1 className="text-3xl text-center mt-6 font-bold">
-            Create Listing
+            Edit Listing
         </h1> 
         <form onSubmit={onSubmit}>
             <h4 className="text-lg mt-6 font-semibold">
@@ -492,7 +529,7 @@ export default function CreateListing() {
             >
                 <div className="flex justify-center items-center">
                     <FcHome className="mr-3 text-3xl bg-red-200 rounded-full border-2"/>
-                    Create Listing
+                    Edit Listing
                 </div>
             </button>
         </form>

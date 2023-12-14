@@ -10,11 +10,11 @@ export default function Header() {
     const auth = getAuth();
 
     const pathMatchRoute = (route) => {
-        return route === location.pathname;
+        if(route === location.pathname){
+           return true
+        }
     }
-//if(route === location.pathname){
- //   return true
-//}
+    //return route === location.pathname;
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -35,8 +35,8 @@ export default function Header() {
                 />
                 <Link to='/'>
                 <h1 className='font-bold text-xl sm:text-xl flex flex-wrap'>
-                    <span className='text-red-500'>Adrian</span>
-                    <span className='text-slate-800'>Property</span>
+                    <span className='text-red-600'>Adrian</span>
+                    <span className='text-slate-900'>Property</span>
                 </h1>
                 </Link>
             </div>

@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.swiper-button-next:after,
+.swiper-button-prev:after{
+    color: #dc2626
+}
+
+
+.swiper-pagination-progressbar 
+.swiper-pagination-progressbar-fill {
+    background: #ef4444 !important;
+}

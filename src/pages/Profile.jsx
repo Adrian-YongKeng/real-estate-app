@@ -1,15 +1,24 @@
 import { getAuth, updateProfile } from "firebase/auth"
-import { doc, updateDoc } from "firebase/firestore";
-import { useState } from "react"
+import {  deleteDoc, doc, updateDoc} from "firebase/firestore";
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { db } from "../firebase";
 import { FcHome } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { clearListings, deleteListing, fetchListings } from "../features/listings/listingsSlice";
+import { AuthContext } from "../components/AuthProvider";
+import ListingItem from "../components/ListingItem";
 
 
 export default function Profile () {
   const auth = getAuth();
+  const {currentUser} = useContext(AuthContext)
+  const dispatch = useDispatch();
+  const listings = useSelector(state => state.listings.listings)
+
+  const [loading , setLoading] = useState(true);
   const navigate = useNavigate();
   const [changeDetail, setChangeDetail] =useState(false)
 
@@ -20,10 +29,12 @@ export default function Profile () {
   const {username, email} = formData
 
   const handleSignOut = () => {
+    dispatch(clearListings());
     auth.signOut();
     navigate("/");
   };
-//enable to edit
+
+//enable to edit username
   const edit = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -51,7 +62,42 @@ export default function Profile () {
     }
   }
   
+  
+  useEffect(() => {
+    if (currentUser.uid) {
+      dispatch(fetchListings(currentUser.uid))
+        .unwrap()
+        .then(() => {
+          setLoading(false); 
+        })
+      .catch((error) => {
+        console.error("Error while fetching listings: ", error);
+        setLoading(false); 
+      });
+    }
+  }, [dispatch, currentUser.uid]);
 
+  const onDelete = async(firestore_doc_id) => {
+    if(window.confirm("Are you sure you want to delete?")){
+      try { 
+        //delete from firestore
+        const docRef = doc(db, "listings", firestore_doc_id);
+        await deleteDoc(docRef);
+        //delete from redux sql database
+        await dispatch(deleteListing(firestore_doc_id)).unwrap();
+        //refetch
+        dispatch(fetchListings(currentUser.uid))
+        toast.success("Listing deleted successfully");
+      }catch (error) {
+        console.error("Error while deleting listing: ", error);
+        toast.error("Failed to delete the listing");
+      }
+    }
+  };
+
+  const onEdit = (firestore_doc_id) => {
+    navigate(`/edit-listing/${firestore_doc_id}`)
+  }
 
   return (
     <>
@@ -104,6 +150,25 @@ export default function Profile () {
           </button>
         </div>
       </section>
+
+      <div className="max-w-6xl px-3 mt-10 mx-auto">
+      {!loading && listings.length > 0 && (
+          <>
+            <h2 className="text-2xl text-center font-semibold mb-6">My Listings</h2>
+            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5
+              mt-6 mb-6">
+              {listings.map((listing) => (
+                <ListingItem 
+                  key={listing.firestore_doc_id}
+                  listing={listing}
+                  onDelete={()=> onDelete(listing.firestore_doc_id)}
+                  onEdit={()=> onEdit(listing.firestore_doc_id)}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
     </>
   )
 }

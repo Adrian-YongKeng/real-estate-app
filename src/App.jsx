@@ -14,7 +14,7 @@ import CreateListing from "./pages/CreateListing";
 import Listing from "./pages/Listing";
 import { Provider } from "react-redux";
 import store from "./store"
-import Category from "./pages/Category";
+import EditListing from "./pages/EditListing";
 
 export default function App() {
 
@@ -45,8 +45,15 @@ export default function App() {
               </RequireAuth>
             }
           />
-          <Route path="/listing" element={<Listing/>}/>
-          <Route path="/category" element={<Category/>}/>
+          <Route 
+            path="/edit-listing/:firestore_doc_id" 
+            element={
+              <RequireAuth>
+                <EditListing/>
+              </RequireAuth>
+            }
+          />
+          <Route path="/listing/:firestore_doc_id" element={<Listing/>}/>
 
         </Routes>
       </BrowserRouter>

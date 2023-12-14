@@ -14,14 +14,21 @@ export const fetchListings = createAsyncThunk(
     }
 );
 
+//get by firestore_doc_id
+export const fetchFormData = createAsyncThunk(
+    "listings/fetchFormData", 
+    async(firestore_doc_id) => {                     //listing
+        const response = await axios.get(`${BASE_URL}/listing/${firestore_doc_id}`);
+        return response.data ;
+    }
+);
+
 //create a listing
 export const addListing = createAsyncThunk(
     "listings/addListing",
     async(formData) => {
-        
         const response = await axios.post(`${BASE_URL}/listings`, formData);
         return  response.data ;
-        
     }
 );
 
@@ -50,26 +57,36 @@ const listingsSlice = createSlice({
         listings: [],
         loading: true,
   },
-  reducers: { },
+  reducers: { 
+    clearListings: (state) => {
+        state.listings = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
         .addCase(fetchListings.fulfilled, (state,action) => {
             state.listings = action.payload;
-            state.loading = false;
+            //state.loading = false;
         })
         .addCase(addListing.fulfilled, (state, action) => {
             state.listings = [action.payload, ...state.listings];
         })
         .addCase(updateListing.fulfilled, (state, action) => {
-            const index = state.listings.findIndex(listing => listing.id === action.payload.id);
+            const index = state.listings.findIndex(listing => listing.firestore_doc_id === action.payload.id);
             if (index !== -1) {
                 state.listings[index] = action.payload;
             }
         })
         .addCase(deleteListing.fulfilled, (state, action) => {
-            state.listings = state.listings.filter(listing => listing.id !== action.payload);
+            state.listings = state.listings.filter(listing => listing.firestore_doc_id !== action.payload);
         })
+        .addCase(fetchFormData.fulfilled, (state,action) => {
+            state.listings = [action.payload];//object
+        })
+        
     }
 })
+
+export const { clearListings } = listingsSlice.actions;
 
 export default listingsSlice.reducer;
