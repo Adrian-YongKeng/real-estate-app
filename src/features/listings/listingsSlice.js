@@ -6,7 +6,7 @@ const BASE_URL = "https://adrian-estate-api.yy1123.repl.co";
 
 // fetch the 5 latest listings
 export const fetchLatestListings = createAsyncThunk(
-    "listings/fetchLatestListings",
+    "generalListings/fetchLatestListings",
     async () => {
       const response = await axios.get(`${BASE_URL}/listings/latest`);
       return response.data;
@@ -31,6 +31,61 @@ export const fetchFormData = createAsyncThunk(
         return response.data ;
     }
 );
+
+// Fetch 4 offer listings
+export const fetchOfferListings = createAsyncThunk(
+    "listings/fetchOfferListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/offer`);
+      return response.data;
+    }
+);
+
+// Fetch 4 sale listings
+export const fetchSaleListings = createAsyncThunk(
+    "listings/fetchSaleListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/sale`);
+      return response.data;
+    }
+);
+  
+  // Fetch 4 rent listings
+export const fetchRentListings = createAsyncThunk(
+    "listings/fetchRentListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/rent`);
+      return response.data;
+    }
+);
+
+// Fetch all offer listings
+export const fetchAllOfferListings = createAsyncThunk(
+    "listings/fetchAllOfferListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/discounted_price`);
+      return response.data;
+    }
+);
+
+// Fetch all sale listings
+export const fetchAllSaleListings = createAsyncThunk(
+    "listings/fetchAllSaleListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/sale/all`);
+      return response.data;
+    }
+  );
+  
+  // Fetch all rent listings
+  export const fetchAllRentListings = createAsyncThunk(
+    "listings/fetchAllRentListings",
+    async () => {
+      const response = await axios.get(`${BASE_URL}/listings/rent/all`);
+      return response.data;
+    }
+  );
+
 
 //create a listing
 export const addListing = createAsyncThunk(
@@ -64,12 +119,19 @@ const listingsSlice = createSlice({
     name: 'listings',
     initialState: {
         listings: [],
+        generalListings: [],
+        offerListings: [],
+        saleListings: [],
+        rentListings: [],
+        allOfferListings: [],
+        allSaleListings:[],
+        allRentListings:[],
         loading: true,
   },
   reducers: { 
     clearListings: (state) => {
-        state.listings = [];
-    },
+        state.listings = []; 
+      },
   },
   extraReducers: (builder) => {
     builder
@@ -93,12 +155,32 @@ const listingsSlice = createSlice({
             state.listings = [action.payload];//object
         })
         .addCase(fetchLatestListings.fulfilled, (state, action) => {
-            state.listings = action.payload;
+            state.generalListings = action.payload;
         })
-        
+        //4 listings
+        .addCase(fetchOfferListings.fulfilled, (state, action) => {
+            state.offerListings = action.payload;
+            //state.listings = action.payload;
+        })
+        .addCase(fetchSaleListings.fulfilled, (state, action) => {
+            state.saleListings = action.payload;
+          })
+        .addCase(fetchRentListings.fulfilled, (state, action) => {
+            state.rentListings = action.payload;
+        })
+        // end 4 listings
+        .addCase(fetchAllOfferListings.fulfilled, (state, action) => {
+            state.allOfferListings = action.payload;
+        })
+        .addCase(fetchAllSaleListings.fulfilled, (state, action) => {
+            state.allSaleListings = action.payload;
+        })
+        .addCase(fetchAllRentListings.fulfilled, (state, action) => {
+            state.allRentListings = action.payload;
+        })
     }
 })
 
-export const { clearListings } = listingsSlice.actions;
+export const { clearListings} = listingsSlice.actions;
 
 export default listingsSlice.reducer;

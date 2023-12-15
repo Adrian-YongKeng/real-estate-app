@@ -96,7 +96,6 @@ export default function Listing() {
                 backgroundSize: "cover"
               }}
             >
-
             </div>
           </SwiperSlide>
         ))}

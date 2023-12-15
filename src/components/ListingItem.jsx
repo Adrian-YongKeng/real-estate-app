@@ -5,7 +5,6 @@ import { FaBath, FaBed, FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 
 
-
 export default function ListingItem({listing, onDelete, onEdit}) {
     const imageUrl = listing.image_url && listing.image_url.split(';')[0];
 

@@ -5,7 +5,7 @@ export default function Maps({listing}) {
   return (
     <MapContainer 
       center={[listing.latitude, listing.longitude]} 
-      zoom={13} 
+      zoom={10} 
       scrollWheelZoom={false} 
       style={{height:"100%", width:"100%"}}
     >

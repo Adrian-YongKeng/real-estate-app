@@ -15,6 +15,7 @@ import Listing from "./pages/Listing";
 import { Provider } from "react-redux";
 import store from "./store"
 import EditListing from "./pages/EditListing";
+import Category from "./pages/Category";
 
 export default function App() {
 
@@ -54,7 +55,7 @@ export default function App() {
             }
           />
           <Route path="/listing/:firestore_doc_id" element={<Listing/>}/>
-
+          <Route path="/category/:type" element={<Category/>}/>
         </Routes>
       </BrowserRouter>
     </Provider>

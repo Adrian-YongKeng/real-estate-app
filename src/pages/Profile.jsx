@@ -27,12 +27,6 @@ export default function Profile () {
   })
   const {username, email} = formData
 
-  const handleSignOut = () => {
-    dispatch(clearListings());
-    auth.signOut();
-    navigate("/");
-  };
-
 //enable to edit username
   const edit = (e) => {
     setFormData((prevState) => ({
@@ -47,8 +41,7 @@ export default function Profile () {
         await updateProfile(auth.currentUser, {
           displayName: username,
         });
-      //update username to firestore
-                              //collection
+    //update username to firestore//"collection"
         const docRef = doc(db, "users", auth.currentUser.uid)
         await updateDoc(docRef, {
           username: username})
@@ -60,18 +53,25 @@ export default function Profile () {
   }
   
   useEffect(() => {
-    if (currentUser.uid) {
-      dispatch(fetchListings(currentUser.uid))
-        .unwrap()
+    let didCancel = false;
+    if (currentUser?.uid) {
+      dispatch(fetchListings(currentUser.uid)).unwrap()
         .then(() => {
-          setLoading(false); 
+          if (!didCancel) { // Check if the component is still mounted
+            setLoading(false); 
+          }
         })
       .catch((error) => {
-        console.error("Error while fetching listings: ", error);
-        setLoading(false); 
+        if (!didCancel) { // Check if the component is still mounted
+          console.error("Error while fetching listings: ", error);
+          setLoading(false); 
+        }
       });
-    }
-  }, [dispatch, currentUser.uid]);
+    } return () => {
+      didCancel = true; // Set flag to true when component unmounts
+      dispatch(clearListings()); // Clear listings when component unmounts
+    };
+  }, [dispatch, currentUser?.uid]);
 
   const onDelete = async(firestore_doc_id) => {
     if(window.confirm("Are you sure you want to delete?")){
@@ -94,6 +94,12 @@ export default function Profile () {
   const onEdit = (firestore_doc_id) => {
     navigate(`/edit-listing/${firestore_doc_id}`)
   }
+
+  const handleSignOut = () => {
+    auth.signOut();
+    dispatch(clearListings());
+    navigate("/");
+  };
 
   return (
     <>

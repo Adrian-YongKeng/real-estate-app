@@ -15,7 +15,7 @@ import { useNavigate } from "react-router";
 
 export default function Slider() {
     const dispatch = useDispatch();
-    const listings = useSelector(state => state.listings.listings)
+    const listings = useSelector(state => state.listings.generalListings)
     const navigate = useNavigate();
     //const [loading , setLoading] = useState(true)
     
@@ -40,7 +40,7 @@ export default function Slider() {
                 pagination={{ type:"progressbar" }}
                 effect="fade" 
                 modules={[EffectFade, Autoplay, Navigation, Pagination]} 
-                autoplay={{delay: 5500}}
+                autoplay={{delay: 6000}}
             >
                 {listings.map((listing)=> (
                     <SwiperSlide key={listing.firestore_doc_id}
@@ -48,7 +48,7 @@ export default function Slider() {
                     >
                        <div style={{background: `url(${listing.image_url.split(';')[0]}) center, no-repeat`,
                             backgroundSize: "cover"}}
-                            className="relative w-full h-[400px] overflow-hidden"
+                            className="relative w-full h-[380px] overflow-hidden"
                         >
                        </div>
                        <p className="text-[#f1faee] absolute left-1 top-3 font-medium max-w-[90%] 
