@@ -19,3 +19,58 @@ html::-webkit-scrollbar{
 html{
     scrollbar-width:none;
 }
+
+.swiper-slide img {
+    width: 100%;       /* Ensure the image takes up the whole slide width */
+    height: auto;      /* Ensure the height adjusts to maintain aspect ratio */
+    object-fit: cover; /* Ensures the image covers the area without being stretched */
+  }
+
+
+/* Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+  
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto; 
+    height: auto; 
+    max-width: 70%; 
+    max-height: 80vh; 
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensures that no content spills out of the modal */
+    display: flex;           
+    justify-content: center; 
+    align-items: center;    
+    border-radius: 10px;
+    }
+
+  .modal-image {
+    max-width: 100%;
+    max-height: calc(80vh - 40px);; 
+    object-fit: contain; 
+    border-radius: 8px;
+  }
+  
+  /* Responsiveness for smaller screens */
+  @media (max-width: 768px) {
+    .modal {
+      max-width: 95%;
+      max-height: 95%;
+      margin: auto;
+    }
+  }
+  

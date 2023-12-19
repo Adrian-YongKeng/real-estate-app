@@ -87,8 +87,8 @@ export default function SignIn () {
                 duration-200 ease-in-out" to="/forgot-password">Forgot password?</Link>
               </p>
             </div>
-            <button className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded shadow-md
-            hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800" 
+            <button className="w-full bg-red-600 text-white px-7 py-3 text-sm font-medium rounded shadow-md
+            hover:bg-red-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800" 
               type="submit">
               SIGN IN
             </button>

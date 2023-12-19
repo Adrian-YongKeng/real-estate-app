@@ -1,7 +1,27 @@
-import { useState } from "react"
+import { doc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react"
+import { db } from "../firebase";
 
 export default function Contact({listing}) {
    const [message, setMessage] = useState("");
+   const [username, setUsername] = useState('');
+
+   useEffect(() => {
+    // Fetch the username from Firestore when the component mounts or when listing changes
+    const fetchUsername = async () => {
+        if (listing.user_id) {
+            const userRef = doc(db, "users", listing.user_id);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                setUsername(userSnap.data().username); // Get the updated username
+            } else {
+                console.error("User not found in Firestore");
+            }
+        }
+    };
+
+    fetchUsername();
+}, [listing]);
 
     const onChange = (e) => {
         e.preventDefault
@@ -11,7 +31,7 @@ export default function Contact({listing}) {
   return (
     <div className="flex flex-col w-full">
         <p>
-            Contact <span className="font-semibold">{listing.username}</span> for the <span className="font-semibold">{listing.title}</span>
+            Contact <span className="font-semibold">{username || listing.username}</span> for the <span className="font-semibold">{listing.title}</span>
         </p> 
         <div className="mt-3 mb-4">
             <textarea name="message"

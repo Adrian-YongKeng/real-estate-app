@@ -17,6 +17,7 @@ import { FaParking } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
 import Contact from "../components/Contact";
 import Maps from "../components/Maps";
+import { IoCloseCircle } from "react-icons/io5";
 
 
 export default function Listing() {
@@ -27,6 +28,8 @@ export default function Listing() {
   const auth = getAuth();
   const [contactLandlord, setContactLandord] = useState(false);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   // useEffect(() => {
  //   if (firestore_doc_id) {
  //   dispatch(fetchFormData(firestore_doc_id))
@@ -78,6 +81,49 @@ export default function Listing() {
     }
   };
 
+  const openModal = (index) => {
+    setActiveIndex(index);
+    setIsModalOpen(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const renderModal = (
+    <>
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <Swiper
+              slidesPerView={1}
+              initialSlide={activeIndex}
+              pagination={{ clickable: true }}
+              navigation={true}
+              modules={[Pagination, Navigation]}
+            >
+              {imageUrls.map((url, index) => (
+                <SwiperSlide key={index}>
+                    <img src={url} alt={`Image ${index}`} 
+                      className="modal-image" />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+            <button
+              className="absolute top-2 right-2 text-4xl text-red-700 cursor-pointer z-10 hover:text-red-500"
+              onClick={closeModal}
+              aria-label="Close"
+            >
+              <IoCloseCircle />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+  
+
   return (
     <main>
       <Swiper 
@@ -86,11 +132,12 @@ export default function Listing() {
         pagination={{ type:"progressbar" }}
         effect="fade" 
         modules={[EffectFade, Autoplay, Navigation, Pagination]} 
-        autoplay={{delay: 5000}}
+        autoplay={{delay: 6000}}
         >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index}>
             <div className="relative w-full overflow-hidden h-[400px]" 
+              onClick={() => openModal(index)}
               style={{
                 background: `url(${url}) center no-repeat`,
                 backgroundSize: "cover"
@@ -195,6 +242,7 @@ export default function Listing() {
           />
         </div>
     </div>
+    {isModalOpen && renderModal}
     </main>
 
   )

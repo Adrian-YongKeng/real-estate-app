@@ -157,6 +157,7 @@ const listingsSlice = createSlice({
         .addCase(fetchLatestListings.fulfilled, (state, action) => {
             state.generalListings = action.payload;
         })
+        
         //4 listings
         .addCase(fetchOfferListings.fulfilled, (state, action) => {
             state.offerListings = action.payload;
@@ -169,6 +170,7 @@ const listingsSlice = createSlice({
             state.rentListings = action.payload;
         })
         // end 4 listings
+
         .addCase(fetchAllOfferListings.fulfilled, (state, action) => {
             state.allOfferListings = action.payload;
         })

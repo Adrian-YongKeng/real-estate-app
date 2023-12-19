@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, getAuth,
   updateProfile } 
   from "firebase/auth";
 import { db } from "../firebase";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, query, serverTimestamp, setDoc, where } from "firebase/firestore";
 import { toast } from "react-toastify";
 
 const houseImage = "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -32,6 +32,16 @@ export default function SignUp () {
   const onSubmit = async(e) => {
     e.preventDefault()
     try {
+        // Query the 'users' collection to check if the username already exists
+      const usersRef = collection(db, "users");
+      const querySnapshot = await getDocs(query(usersRef, where("username", "==", username)));
+
+      if (!querySnapshot.empty) {
+        // Username already exists
+        toast.error("Username already exists. Please choose a different username.");
+        return;
+      }
+
       const userCrediential = await 
         createUserWithEmailAndPassword(auth, email, password)
 
@@ -46,7 +56,15 @@ export default function SignUp () {
       await setDoc(doc(db, "users", user.uid), formDataCopy)
       navigate("/")
     } catch (error) {
-      toast.error("Something went wrong with the registration!")
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error("Email already in use. Please use a different email.");
+      } else if (error.code === 'auth/invalid-email') {
+        toast.error("Invalid email. Please enter a valid email address.");
+      } else if (error.code === 'auth/weak-password') {
+        toast.error("Weak password. Password should be at least 6 characters.");
+      } else {
+        toast.error("Something went wrong with the registration!");
+      }
     }
   }
 
@@ -68,6 +86,7 @@ export default function SignUp () {
               value={username} 
               onChange={onChange}
               placeholder="Username"
+              required
             />
             <input 
               className="w-full px-4 py-2 text-xl text-gray-700
@@ -76,6 +95,7 @@ export default function SignUp () {
               value={email} 
               onChange={onChange}
               placeholder="Email address"
+              required
             />
             <div className="relative mb-2">
               <input 
@@ -107,8 +127,8 @@ export default function SignUp () {
                 duration-200 ease-in-out" to="/forgot-password">Forgot password?</Link>
               </p>
             </div>
-            <button className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded shadow-md
-            hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800" 
+            <button className="w-full bg-red-600 text-white px-7 py-3 text-sm font-medium rounded shadow-md
+            hover:bg-red-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800" 
               type="submit">
               SIGN UP
             </button>

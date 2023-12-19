@@ -8,13 +8,7 @@ export default function Header() {
     const navigate = useNavigate();
     const [pageTitle, setPageTitle] = useState("Sign In")
     const auth = getAuth();
-
-    const pathMatchRoute = (route) => {
-        if(route === location.pathname){
-           return true
-        }
-    }
-    //return route === location.pathname;
+    
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -25,16 +19,23 @@ export default function Header() {
         })
     }, [auth]);
 
+    const pathMatchRoute = (route) => {
+        if(route === location.pathname){
+           return true
+        }
+    }
+    
+
   return (
     <div className="bg-white border-b shadow-lg sticky top-0 z-40">
-        <header className="flex justify-between items-center px-3 max-w-6xl mx-auto">
+        <header className="flex justify-between items-center px-3 py-0.5 max-w-6xl mx-auto">
             <div className='flex items-center'>
                 <img src={propertyLogo} 
-                    className="h-6 mr-2 cursor-pointer" 
+                    className="h-9 mr-2 cursor-pointer" 
                     onClick={()=> navigate("/")}
                 />
                 <Link to='/'>
-                <h1 className='font-bold text-xl sm:text-xl flex flex-wrap'>
+                <h1 className='font-bold text-xl sm:text-2xl flex flex-wrap'>
                     <span className='text-red-600'>Adrian</span>
                     <span className='text-slate-900'>Property</span>
                 </h1>
@@ -42,22 +43,22 @@ export default function Header() {
             </div>
             <div>
                 <ul className="flex space-x-10">
-                    <li className={`cursor-pointer py-3 text-sm font-semibold
+                    <li className={`cursor-pointer py-3 text-md font-semibold
                         text-gray-400 border-b-4 border-b-transparent 
-                        ${ pathMatchRoute("/") && "text-gray-900 border-b-red-600" }`}
+                        ${ pathMatchRoute("/") && "text-gray-950 border-b-red-500" }`}
                         onClick={()=> navigate("/")}>
                         Home
                     </li>
-                    <li className={`cursor-pointer py-3 text-sm font-semibold
+                    <li className={`cursor-pointer py-3 text-md font-semibold
                         text-gray-400 border-b-4 border-b-transparent 
-                        ${pathMatchRoute("/offers") && "text-gray-900 border-b-red-600"}`}
+                        ${pathMatchRoute("/offers") && "text-gray-950 border-b-red-500"}`}
                         onClick={()=> navigate("/offers")} >
                             Offers
                     </li>
-                    <li className={`cursor-pointer py-3 text-sm font-semibold
+                    <li className={`cursor-pointer py-3 text-md font-semibold
                         text-gray-400 border-b-4 border-b-transparent
                         ${ (pathMatchRoute("/signin") || pathMatchRoute("/profile") ) 
-                            && "text-gray-900 border-b-red-600" }
+                            && "text-gray-950 border-b-red-500" }
                         `}
                         onClick={()=> navigate(pageTitle === "Sign In" ? "/signin" : "/profile")} 
                     >
