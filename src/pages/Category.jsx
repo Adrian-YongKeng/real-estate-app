@@ -25,7 +25,7 @@ export default function Category() {
   const listingsToShow = params.type === "sale" ? allSaleListings : allRentListings;
 
   return (
-    <div className="max-w-6xl mx-auto px-3">
+    <div className="max-w-6xl mx-auto px-3 mb-5">
       <h1 className="text-3xl text-center my-6 font-bold">
         {params.type === "rent" ? "Properties for Rent" : "Properties for Sale"}
       </h1>
