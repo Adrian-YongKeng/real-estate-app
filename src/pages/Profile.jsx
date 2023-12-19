@@ -12,6 +12,7 @@ import { AuthContext } from "../components/AuthProvider";
 import ListingItem from "../components/ListingItem";
 import { CgProfile } from "react-icons/cg";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { FaEdit, FaSignOutAlt } from "react-icons/fa";
 
 
 export default function Profile () {
@@ -201,7 +202,7 @@ export default function Profile () {
             }
         </div>
 
-        <div className="w-full md:w-[50%] mt-6 px-3">
+        <div className="w-full md:w-[50%] mt-5 px-3">
           <form>
             <input type="text" 
               id="username" 
@@ -209,14 +210,14 @@ export default function Profile () {
               disabled={!changeDetail}
               onChange={edit}
               className={`w-full px-4 py-2 text-xl text-gray-700 border border-gray-400 
-              rounded transition ease-in-out mb-6 ${
+              rounded transition ease-in-out mb-5 ${
                 changeDetail && "bg-red-300 focus:bg-red-300"
               }`}
             />
 
             <input type="email" id="email" value={email} disabled 
               className="w-full px-4 py-2 text-xl text-gray-700 border 
-              border-gray-400 rounded transition ease-in-out mb-6"
+              border-gray-400 rounded transition ease-in-out mb-5"
             />
 
             <div className="flex justify-between whitespace-nowrap text-sm sm:text-lg mb-6">
@@ -225,13 +226,15 @@ export default function Profile () {
                   changeDetail && submitChanges();
                   setChangeDetail((prevState) => !prevState);
                 }}
-                className="text-red-500 hover:text-red-700 transition ease-in-out duration-200 cursor-pointer"
+                className="flex items-center space-x-1 text-red-500 hover:text-red-700 transition ease-in-out duration-200 cursor-pointer"
               >
-                {changeDetail ? "Apply change" : "Edit profile"}
+                {changeDetail ? "Apply change" : "Edit profile"} <FaEdit className="ml-2" />
+
               </p>
               <p onClick={handleSignOut}
-                className="text-blue-500 hover:text-blue-800 transition ease-in-out duration-200 cursor-pointer">
-                Sign Out</p>
+                className="flex items-center space-x-1 text-blue-500 hover:text-blue-800 transition ease-in-out duration-200 cursor-pointer"
+              >
+                <FaSignOutAlt className="mr-2"/> Sign Out</p>
             </div>
           </form>
           <button type="submit" 
@@ -247,7 +250,7 @@ export default function Profile () {
         </div>
       </section>
 
-      <div className="max-w-6xl px-3 mt-10 mx-auto">
+      <div className="max-w-6xl px-3 mt-9 mx-auto">
       {!loading && listings.length > 0 && (
           <>
             <h2 className="text-2xl text-center font-semibold mb-6">My Listings</h2>
