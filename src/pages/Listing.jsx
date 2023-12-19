@@ -18,6 +18,7 @@ import { getAuth } from "firebase/auth";
 import Contact from "../components/Contact";
 import Maps from "../components/Maps";
 import { IoCloseCircle } from "react-icons/io5";
+import { MdOutlineMailOutline } from "react-icons/md";
 
 
 export default function Listing() {
@@ -223,10 +224,11 @@ export default function Listing() {
               <div className="mt-6">
                 <button 
                   onClick={handleContactClick}
-                  className="px-7 py-3 bg-red-600 text-white font-medium text-sm uppercase rounded 
+                  className="flex items-center justify-center px-7 py-3 bg-red-600 text-white font-medium text-sm uppercase rounded 
                   shadow-md hover:bg-red-700 hover:shaodow-lg focus:bg-red-700 focus:shadow-lg w-full
                   text-center transition duration-150 ease-in-out">
-                  Contact Landlord
+                  {auth.currentUser && <MdOutlineMailOutline className="text-lg mr-2" />}
+                  {auth.currentUser ? "Send Enquiry" : "Contact Landlord / Agents"}
                 </button>
               </div>
             )}
