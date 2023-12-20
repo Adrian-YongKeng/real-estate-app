@@ -6,7 +6,7 @@ export default function Header() {
     const propertyLogo = "https://firebasestorage.googleapis.com/v0/b/realestate-6d2e3.appspot.com/o/propertyguru.png?alt=media&token=72443c42-e476-46b3-ac54-eadef4d0bd63"
     const location = useLocation();
     const navigate = useNavigate();
-    const [pageTitle, setPageTitle] = useState("Sign In")
+    const [pageTitle, setPageTitle] = useState("SignIn")
     const auth = getAuth();
     
     useEffect(() => {
@@ -14,7 +14,7 @@ export default function Header() {
             if (user) {
                 setPageTitle("Profile")
             } else {
-                setPageTitle("Sign In")
+                setPageTitle("SignIn")
             }
         })
     }, [auth]);
@@ -42,7 +42,7 @@ export default function Header() {
                 </Link>
             </div>
             <div>
-                <ul className="flex space-x-10">
+                <ul className="flex space-x-4 sm:space-x-10">
                     <li className={`cursor-pointer py-3 text-md font-semibold
                         text-gray-400 border-b-4 border-b-transparent 
                         ${ pathMatchRoute("/") && "text-gray-950 border-b-red-500" }`}
@@ -60,7 +60,7 @@ export default function Header() {
                         ${ (pathMatchRoute("/signin") || pathMatchRoute("/profile") ) 
                             && "text-gray-950 border-b-red-500" }
                         `}
-                        onClick={()=> navigate(pageTitle === "Sign In" ? "/signin" : "/profile")} 
+                        onClick={()=> navigate(pageTitle === "SignIn" ? "/signin" : "/profile")} 
                     >
                         {pageTitle}
                     </li>
