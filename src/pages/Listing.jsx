@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router";
 import { fetchFormData } from "../features/listings/listingsSlice";
@@ -12,13 +12,17 @@ import {
   Pagination,
 } from "swiper/modules";
 import "swiper/css/bundle"
-import {  FaBath, FaBed, FaCouch, FaMapLocationDot, FaShare } from "react-icons/fa6";
+import {  FaBath, FaBed, FaCouch, FaMapLocationDot, FaPhone, FaShare } from "react-icons/fa6";
 import { FaParking } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
 import Contact from "../components/Contact";
 import Maps from "../components/Maps";
 import { IoCloseCircle } from "react-icons/io5";
 import { MdOutlineMailOutline } from "react-icons/md";
+import { AuthContext } from "../components/AuthProvider";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { CgProfile } from 'react-icons/cg';
 
 
 export default function Listing() {
@@ -31,6 +35,9 @@ export default function Listing() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showPhoneNumber, setShowPhoneNumber] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+
   // useEffect(() => {
  //   if (firestore_doc_id) {
  //   dispatch(fetchFormData(firestore_doc_id))
@@ -38,14 +45,29 @@ export default function Listing() {
 //    }
  // }, [dispatch, firestore_doc_id])
 
+ const fetchUserDetails = async (userId) => {
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+  
+  if (userSnap.exists()) {
+    return userSnap.data();
+  } else {
+    // Handle the case where the user does not exist
+    console.error("No user found!");
+  }
+};
+
  useEffect(() => {
   if (firestore_doc_id) {
     setLoading(true);
     dispatch(fetchFormData(firestore_doc_id))
       .unwrap()
-      .then((data) => {
+      .then(async(data) => {
         console.log('Fetched data:', data);
-        setLoading(false);
+         //fetch the user details using the user_id from listing
+         const userDetailsResponse = await fetchUserDetails(data.user_id);
+         setUserDetails(userDetailsResponse);
+         setLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching listing:', err);
@@ -73,12 +95,21 @@ export default function Listing() {
    : listing.image_url.split(';'); // delimiter to split the string
 
    const handleContactClick = () => {
-    // Check if user is logged in
+     // Check if user is logged in
     if (auth.currentUser) {
       setContactLandord(true);
     } else {
-      toast.error("Please sign in or sign up to contact the landlord / agents.");
+      toast.info("Please sign in or sign up to contact the landlord / agents.");
       navigate('/signin'); 
+    }
+  };
+
+  const handleViewPhoneNumber = () => {
+    if (auth.currentUser) {
+      setShowPhoneNumber(!showPhoneNumber);
+    } else {
+      toast.info("Please sign in to view the phone number.");
+      navigate('/signin');
     }
   };
 
@@ -201,7 +232,7 @@ export default function Listing() {
               <span className="font-semibold">Description -</span>
               {listing.description}
             </p>
-            <ul className="flex items-center space-x-2 sm:space-x-10 text-sm font-semibold mb-3">
+            <ul className="flex items-center space-x-5 sm:space-x-10 text-sm font-semibold mb-3">
               <li className="flex items-center whitespace-nowrap">
                 <FaBed className="mr-1 text-lg"/>
                 {listing.bedrooms} Bed
@@ -219,26 +250,56 @@ export default function Listing() {
                 {listing.furnished ? "Furnished" : "No furnised"} 
               </li>
             </ul>
-            <hr className="mb-6"/>
-            {listing.user_id !== auth.currentUser?.uid && !contactLandlord && (
-              <div className="mt-6">
-                <button 
-                  onClick={handleContactClick}
-                  className="flex items-center justify-center px-7 py-3 bg-red-600 text-white font-medium text-sm uppercase rounded 
-                  shadow-md hover:bg-red-700 hover:shaodow-lg focus:bg-red-700 focus:shadow-lg w-full
-                  text-center transition duration-150 ease-in-out">
-                  {auth.currentUser && <MdOutlineMailOutline className="text-lg mr-2" />}
-                  {auth.currentUser ? "Send Enquiry" : "Contact Landlord / Agents"}
-                </button>
+            <hr className="mb-4"/>
+            
+            
+            <div className="container mx-auto p-4">
+              <div className="flex flex-col items-center md:flex-row md:justify-center 
+                md:items-center space-y-4 md:space-y-0 md:space-x-6">
+                {/* Profile Picture */}
+                <div className="flex flex-col items-center mb-4 md:mb-0 md:w-[23%]">
+                  {userDetails?.photoURL ? (
+                    <img 
+                      src={userDetails.photoURL} 
+                      alt="Profile" 
+                      className="w-20 h-20 rounded-full object-cover"
+                    />
+                  ) : (
+                    <CgProfile className="w-20 h-20 text-gray-500" />
+                  )}
+                  <p className="mt-2 text-md font-medium text-center w-full">{userDetails?.username}</p>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex flex-col space-y-2 w-full md:w-[77%] ">
+                  <button
+                    onClick={handleViewPhoneNumber}
+                    className="flex items-center justify-center px-7 py-3 bg-white text-black font-medium text-sm uppercase rounded border
+                     border-black shadow-md hover:bg-black hover:text-white focus:shadow-lg w-full text-center transition duration-150 ease-in-out"
+                  >
+                    <FaPhone className="mr-2 text-lg md:text-lg" />
+                    {showPhoneNumber ? listing.phone_number : "View Phone Number"}
+                  </button>
+                  
+                  <button
+                    onClick={handleContactClick}
+                    className="flex items-center justify-center px-7 py-3 bg-red-600 text-white font-medium text-sm uppercase rounded 
+                      shadow-md hover:bg-red-700 focus:shadow-lg w-full text-center transition duration-150 ease-in-out"
+                  >
+                    {auth.currentUser && <MdOutlineMailOutline className="text-lg md:text-xl mr-2" />}
+                    {auth.currentUser ? "Send Enquiry" : "Contact Landlord / Agents"}
+                  </button>
+                </div>
               </div>
-            )}
+            </div>
             {contactLandlord && (
               <Contact
                 listing= {listing}
               />
             )}
         </div>
-        <div className="mt-6 md:mt-0 md:ml-2 w-full h-[200px] md:h-[400px] z-10 overflow-x-hidden">
+        <hr className="mb-4"/>
+        <div className="mt-6 mb-4 md:mt-0 md:ml-2 w-full h-[200px] md:h-[400px] z-10 overflow-x-hidden">
           <Maps
             listing={listing}
           />

@@ -37,14 +37,15 @@ export default function CreateListing() {
         latitude: 0,
         longitude: 0,
         images: {},
-        user_id: ""
+        user_id: "",
+        phone_number:""
     })
 
     const {
         type, title,  bedrooms, bathrooms,
         parking, furnished, address, description
         , offer , price, discounted_price, 
-        latitude, longitude,
+        latitude, longitude,phone_number,
         images,
     } = formData
 
@@ -484,6 +485,20 @@ export default function CreateListing() {
                     rounded transition duration-150 ease-in-out focus:border-slate-600"
                 />
             </div>
+
+            <p className="text-lg mt-5 font-semibold">Phone Number</p>
+            <input 
+                type="number" 
+                id="phone_number" 
+                value={phone_number}
+                onChange={onChange}
+                placeholder="123-456-789"
+                maxLength="20"
+                minLength="10"
+                required
+                className="w-full px-4 py-2 text-xl text-gray-700 bg-whitw border border-gray-600 
+                rounded transition duration-150 ease-in-out focus:text-gray-700 focus:bg-white mb-6"
+            />
 
             <button type="submit"
                 className="mb-6 w-full px-7 py-3 bg-red-600 font-medium text-sm text-white uppercase rounded
