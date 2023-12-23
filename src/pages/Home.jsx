@@ -1,21 +1,48 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Slider from "../components/Slider";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ListingItem from "../components/ListingItem";
 import { fetchOfferListings, fetchRentListings, fetchSaleListings } from "../features/listings/listingsSlice";
+import Spinner from "../components/Spinner";
 
 export default function Home() {
   const dispatch = useDispatch()
   const offerListings = useSelector(state => state.listings.offerListings)
   const saleListings = useSelector(state => state.listings.saleListings);
   const rentListings = useSelector(state => state.listings.rentListings);
+  const [loading, setLoading] = useState(true)
 
-  useEffect (()=> {
-    dispatch(fetchOfferListings());
-    dispatch(fetchSaleListings());
-    dispatch(fetchRentListings());
-  }, [dispatch])
+  //useEffect (()=> {
+  //  setLoading(true)
+  //  dispatch(fetchOfferListings());
+  //  dispatch(fetchSaleListings());
+  //  dispatch(fetchRentListings());
+   // setLoading(false)
+  //}, [dispatch, loading])
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        // Fetch all data concurrently
+        await Promise.all([
+          dispatch(fetchOfferListings()),
+          dispatch(fetchSaleListings()),
+          dispatch(fetchRentListings()),
+        ]);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data: ', error);
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [dispatch]);
+  
+
+  if (loading) {
+    return <Spinner/>
+  }
 
   return (
     <div>

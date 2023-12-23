@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router";
 import { fetchFormData } from "../features/listings/listingsSlice";
@@ -19,7 +19,7 @@ import Contact from "../components/Contact";
 import Maps from "../components/Maps";
 import { IoCloseCircle } from "react-icons/io5";
 import { MdOutlineMailOutline } from "react-icons/md";
-import { AuthContext } from "../components/AuthProvider";
+//import { AuthContext } from "../components/AuthProvider";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { CgProfile } from 'react-icons/cg';
