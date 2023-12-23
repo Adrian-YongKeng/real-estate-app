@@ -9,12 +9,25 @@ export default function Offers() {
   const allOfferListings = useSelector(state => state.listings.allOfferListings)
   const [loading, setLoading] = useState(true)
   
-  useEffect(() => {
-    dispatch(fetchAllOfferListings())
-    setLoading(false)
-  }, [dispatch])
-  
+  //not waiting the processs to complete before to the next line
+  //data havent complete already set the loading to false
+  //executed almost immediately after the dispatch, not giving enough time for spinner  
+  //useEffect(() => {
+  //  dispatch(fetchAllOfferListings())
+  //  setLoading(false)
+  //}, [dispatch])\
 
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true); // Start loading before dispatching
+      await dispatch(fetchAllOfferListings());
+      setLoading(false); // Stop loading after dispatching
+    }
+  
+    loadData();
+  }, [dispatch]);
+  
+  
   return (
     <div className="max-w-6xl mx-auto px-3 mb-5">
       <h1 className="text-3xl text-center my-6 font-bold">

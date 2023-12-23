@@ -14,12 +14,16 @@ export default function Category() {
   const params = useParams();
   
   useEffect(() => {
-    if (params.type === "sale") {
-      dispatch(fetchAllSaleListings());
-    } else if (params.type === "rent") {
-      dispatch(fetchAllRentListings());
+    async function loadData() {
+      setLoading(true); 
+      if (params.type === "sale") {
+        await dispatch(fetchAllSaleListings());
+      } else if (params.type === "rent") {
+        await dispatch(fetchAllRentListings());
+      }
+      setLoading(false); 
     }
-    setLoading(false);
+    loadData();
   }, [dispatch, params.type]);
 
   const listingsToShow = params.type === "sale" ? allSaleListings : allRentListings;
