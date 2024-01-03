@@ -17,7 +17,7 @@ export default function Category() {
     async function loadData() {
       setLoading(true); 
       if (params.type === "sale") {
-        await dispatch(fetchAllSaleListings());
+        await dispatch(fetchAllSaleListings());// await show loading first
       } else if (params.type === "rent") {
         await dispatch(fetchAllRentListings());
       }

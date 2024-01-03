@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLatestListings } from "../features/listings/listingsSlice";
-import Spinner from "./Spinner";
+//import Spinner from "./Spinner";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {
   EffectFade,
