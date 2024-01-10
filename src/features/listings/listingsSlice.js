@@ -3,7 +3,8 @@ import axios from "axios";
 
 
 //const BASE_URL = "https://adrian-estate-api.yy1123.repl.co";
-const BASE_URL = "https://d6648714-64f2-4a55-9297-ed6c0da3a482-00-2lkyyecz5uleu.riker.replit.dev"
+//const BASE_URL = "https://d6648714-64f2-4a55-9297-ed6c0da3a482-00-2lkyyecz5uleu.riker.replit.dev"
+ const BASE_URL = "https://adrian-estate-api-yy1123.replit.app"
 
 // fetch the 5 latest listings
 export const fetchLatestListings = createAsyncThunk(
